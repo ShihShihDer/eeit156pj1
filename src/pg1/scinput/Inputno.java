@@ -1,4 +1,4 @@
-package input;
+package pg1.scinput;
 
 import java.util.Scanner;
 import java.util.regex.Pattern;

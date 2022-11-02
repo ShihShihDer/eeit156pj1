@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: exam.e4.ElectionSystem
+Main-Class: pg1.main.ElectionSystem
 

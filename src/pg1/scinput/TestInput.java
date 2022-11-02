@@ -1,4 +1,4 @@
-package input;
+package pg1.scinput;
 
 public class TestInput {
 

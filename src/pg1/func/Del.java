@@ -1,4 +1,4 @@
-package empFunc;
+package pg1.func;
 
 //public class Del{
 //	public void del() {

@@ -1,13 +1,14 @@
-package exam.e4;
+package pg1.main;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
 import input.*;
-import ioEmp.ReadCSV;
-import ioEmp.WriteCSV;
+import pg1.ioCSV.ReadCSV;
+import pg1.scinput.InputSelect;
+import pg1.scinput.InputSystemSelect;
+import pg1.scinput.Inputno;
 
 public class ElectionSystem {
 

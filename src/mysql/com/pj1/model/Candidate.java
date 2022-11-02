@@ -1,4 +1,4 @@
-package exam.e4;
+package mysql.com.pj1.model;
 
 import java.util.Date;
 
