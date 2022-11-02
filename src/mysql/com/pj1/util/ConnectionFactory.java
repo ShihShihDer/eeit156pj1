@@ -17,9 +17,10 @@ public class ConnectionFactory {
         try {
             fis = new FileInputStream("src/db.properties");
             props.load(fis);
-            DriverManager.getConnection(props.getProperty("MYSQL_DB_URL"));
-            props.getProperty("MYSQL_DB_UserName");
-            props.getProperty("MYSQL_DB_Password");
+            conn = DriverManager.getConnection(props.getProperty("MYSQL_DB_URL"),
+            props.getProperty("MYSQL_DB_UserName"),
+            props.getProperty("MYSQL_DB_Password"));
+            System.out.println("資料庫已連線");
         } catch (IOException | SQLException e) {
             System.out.println("無法連線");
             throw new RuntimeException(e);

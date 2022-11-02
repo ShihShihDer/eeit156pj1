@@ -1,22 +1,26 @@
 package mysql.com.pj1.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Candidate {
 
     //	electoral district選區
     private String ed;
-    private Date sData;
+    private LocalDate sData;
     private String name;
     private String party;
     private String remark;
 
-    public Candidate(String ed, Date sData, String name, String party, String remark) {
+    public Candidate(String ed, LocalDate sData, String name, String party, String remark) {
         this.ed = ed;
         this.sData = sData;
         this.name = name;
         this.party = party;
         this.remark = remark;
+    }
+
+    public Candidate() {
+
     }
 
     public String getEd() {
@@ -27,11 +31,11 @@ public class Candidate {
         this.ed = ed;
     }
 
-    public Date getsData() {
+    public LocalDate getsData() {
         return sData;
     }
 
-    public void setsData(Date sData) {
+    public void setsData(LocalDate sData) {
         this.sData = sData;
     }
 
@@ -59,10 +63,13 @@ public class Candidate {
         this.remark = remark;
     }
 
-    public String dsecCd(){
-        return String.format("%s,%s,%s,%s,%s",this.ed,this.sData,this.name,this.party,this.remark);
+    public String toCSV() {
+        return String.format("%s,%s,%s,%s,%s", this.ed, this.sData, this.name, this.party, this.remark);
     }
 
+    public String Cdlist() {
+        return String.format("選區: %s 登記日期: %s 姓名: %s 推薦政黨: %s 備註: %s", this.ed, this.sData, this.name, this.party, this.remark);
+    }
 
     @Override
     public String toString() {
