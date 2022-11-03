@@ -29,8 +29,6 @@ public class ElectionSystem {
 
 
     public static void main(String[] args) {
-
-
         Connection conn = ConnectionFactory.createMYSQLConnection();
         CandidateDao cDao = new CandidateDao(conn);
 boolean a = true;
@@ -45,31 +43,7 @@ boolean a = true;
 //			4.刪除訊息
                 case 4 -> del(cDao);
 //			5.退出訊息管理系統
-                case 5 -> {String s = "SELECT * FROM `election`.`elections` where `elePlace` like ? and `party` like ? and `eleName` like ?";
-                    PreparedStatement preState = null;
-                    try {
-                        preState = conn.prepareStatement(s);
-                    preState.setString(1, "%" + "臺北市" + "%");
-                    preState.setString(2, "%" + "民主進步黨" + "%");
-                    preState.setString(3, "%" + "陳時中" + "%");
-                    ResultSet rs = preState.executeQuery();
-
-                    while (rs.next()) {
-                        Candidate c = new Candidate();
-                        c.setEd(rs.getString("elePlace"));
-                        c.setsData(rs.getDate("sDate").toLocalDate());
-                        c.setName(rs.getString("eleName"));
-                        c.setParty(rs.getString("party"));
-                        c.setRemark(rs.getString("remark"));
-                        System.out.println(c.Cdlist());
-                    }
-                    rs.close();
-                    preState.close();
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }
+//                case 5 -> {}
                 case 6 -> {
                     System.out.println("退出管理系統");
                     try {

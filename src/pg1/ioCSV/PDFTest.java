@@ -1,4 +1,4 @@
-package pg1.func;
+package pg1.ioCSV;
 
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor;

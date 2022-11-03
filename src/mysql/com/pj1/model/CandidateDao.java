@@ -19,12 +19,9 @@ public class CandidateDao {
     private final Connection conn;
     static Scanner sc = new Scanner(System.in);
     List<Candidate> list = new ArrayList<>();
-
     public CandidateDao(Connection conn) {
         this.conn = conn;
     }
-
-
 //    public void addAllCandidates(List<Candidate> list)  {
 //
 ////        INSERT INTO `election`.`elections` (`cdID`,`elePlace`,`sDate`,`eleName`,`party`,`remark`,`eleNO`)
@@ -54,7 +51,6 @@ public class CandidateDao {
 //            throw new RuntimeException(e);
 //        }
 //    }
-
     public List<Candidate> getAllCandidates() throws SQLException {
         String sql = "select * from `election`.`elections`";
         PreparedStatement preState = conn.prepareStatement(sql);
@@ -73,7 +69,6 @@ public class CandidateDao {
         preState.close();
         return list;
     }
-
     public void selectCandidates() throws SQLException {
         boolean e = true;
         while (e) {
@@ -209,7 +204,6 @@ public class CandidateDao {
             }
         }
     }
-
     public void delCandidates() {
         try {
             conn.setAutoCommit(false);
@@ -603,7 +597,6 @@ public class CandidateDao {
             }
         }
     }
-
     public void addCandidates() {
         try {
             conn.setAutoCommit(false);
@@ -790,7 +783,6 @@ public class CandidateDao {
             throw new RuntimeException(e);
         }
     }
-
     public int selectCandidatesToUpd() throws SQLException {
         int id = 0;
         boolean e = true;
@@ -1054,8 +1046,6 @@ public class CandidateDao {
         }
         return id;
     }
-
-
     public void updCandidates(int id) {
         try {
             conn.setAutoCommit(false);

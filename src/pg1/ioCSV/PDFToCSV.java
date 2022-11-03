@@ -1,4 +1,4 @@
-package pg1.func;
+package pg1.ioCSV;
 
 public class PDFToCSV {
 
