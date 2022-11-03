@@ -1,4 +1,4 @@
-package mysql.com.pj1.util;
+package com.test.springtest.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

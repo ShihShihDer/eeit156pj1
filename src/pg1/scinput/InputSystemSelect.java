@@ -21,7 +21,7 @@ public class InputSystemSelect {
 					Pattern pattern = Pattern.compile("[0-9]*");
 					if (pattern.matcher(str).matches()) {
 						num = Integer.parseInt(str);
-						if (String.valueOf(num).length() <= maxLength && num > 0 && num <= 6) {
+						if (String.valueOf(num).length() <= maxLength && num > 0 && num <= 7) {
 							break inputno;
 						} else {
 							System.out.println("指令錯誤");

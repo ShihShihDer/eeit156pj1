@@ -21,7 +21,7 @@ public class Show {
             }
         } else if (s == 2) {
             try {
-                cDao.getAllCandidates().forEach(item -> System.out.println(item.Cdlist()));
+                cDao.getAllCandidates();
             } catch (SQLException e) {
                 System.out.println("資料擷取失敗");
                 e.printStackTrace();

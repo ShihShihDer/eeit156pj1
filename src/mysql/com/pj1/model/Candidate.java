@@ -1,4 +1,4 @@
-package mysql.com.pj1.model;
+package com.test.springtest.model;
 
 import java.time.LocalDate;
 

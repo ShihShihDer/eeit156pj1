@@ -1,23 +1,12 @@
 package pg1.main;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Scanner;
-
-
-import mysql.com.pj1.model.Candidate;
 import mysql.com.pj1.model.CandidateDao;
 import mysql.com.pj1.util.ConnectionFactory;
-import pg1.func.Del;
-import pg1.ioCSV.ReadCSV;
 import pg1.ioCSV.WriteCSV;
 import pg1.scinput.InputSelect;
-import pg1.scinput.InputSystemSelect;
-import pg1.scinput.Inputno;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import static pg1.func.Add.add;
 import static pg1.func.Del.del;
@@ -42,19 +31,26 @@ boolean a = true;
                 case 3 -> upd(cDao);
 //			4.刪除訊息
                 case 4 -> del(cDao);
-//			5.退出訊息管理系統
-//                case 5 -> {}
+//          5.上傳備份檔
+                case 5 -> {
+                    cDao.addAllCandidates();
+                    System.out.println("批次作業完成");
+                }
+//			6.退出訊息管理系統
                 case 6 -> {
                     System.out.println("退出管理系統");
                     try {
                         conn.close();
                         a = false;
 //                        System.exit(0);
-                    } catch (SQLException e) {
+                    }
+                    catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
 
                 }
+//                下載資料庫
+                case 7 -> WriteCSV.writeCSV(conn);
                 default -> System.out.println("功能錯誤");
             }
         }
