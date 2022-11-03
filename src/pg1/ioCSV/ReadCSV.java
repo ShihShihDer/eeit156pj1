@@ -23,7 +23,7 @@ import java.util.Locale;
 public class ReadCSV {
 	public static List<Candidate> readCSV() throws IOException {
 		List<Candidate> list = new ArrayList<>();
-		try (FileInputStream fs = new FileInputStream("..\\project1\\electionDataBase\\election_title.csv");
+		try (FileInputStream fs = new FileInputStream("D:\\javaSSD\\project1\\electionDataBase\\election_title2.csv");
 			 InputStreamReader ir = new InputStreamReader(fs, StandardCharsets.UTF_8);
 			 BufferedReader br = new BufferedReader(ir);) {
 			CSVFormat.Builder builder = CSVFormat.Builder.create();

@@ -2,7 +2,9 @@ package mysql.com.pj1.model;
 
 
 import com.healthmarketscience.jackcess.Cursor;
+import pg1.ioCSV.ReadCSV;
 
+import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,42 +18,50 @@ import static pg1.scinput.Inputno.inputCno;
 import static pg1.scinput.Inputno.inputid;
 
 public class CandidateDao {
-    private final Connection conn;
+    private Connection conn;
     static Scanner sc = new Scanner(System.in);
-    List<Candidate> list = new ArrayList<>();
+//    List<Candidate> list = new ArrayList<>();
+
     public CandidateDao(Connection conn) {
         this.conn = conn;
     }
-//    public void addAllCandidates(List<Candidate> list)  {
-//
-////        INSERT INTO `election`.`elections` (`cdID`,`elePlace`,`sDate`,`eleName`,`party`,`remark`,`eleNO`)
-////        VALUES (<{cdID: }>,<{elePlace: }>,<{registerData: }>,<{eleName: }>,<{party: }>,<{remark: }>,<{eleNO: }>);
-//        String sql = "insert into `election`.`elections` (`cdID`,`elePlace`,`sDate`,`eleName`,`party`,`remark`,`eleNO`)  values (?,?,?,?,?,?,?)";
-//
-//        PreparedStatement preState = null;
-//        try {
-//            preState = conn.prepareStatement(sql);
+
+    public void addAllCandidates() {
+
+//        INSERT INTO `election`.`elections` (`cdID`,`elePlace`,`sDate`,`eleName`,`party`,`remark`,`eleNO`)
+//        VALUES (<{cdID: }>,<{elePlace: }>,<{registerData: }>,<{eleName: }>,<{party: }>,<{remark: }>,<{eleNO: }>);
+        String sql = "insert into `election`.`elections` (`elePlace`,`sDate`,`eleName`,`party`,`remark`,`eleNO`)  values (?,?,?,?,?,?)";
+        String sql2 = "truncate  table `election`.`elections`";
+        PreparedStatement preState = null;
+        PreparedStatement preState2 = null;
+        try {
+            preState2 = conn.prepareStatement(sql2);
+            preState2.executeUpdate();
+            preState2.close();
+            preState = conn.prepareStatement(sql);
 //        int i = 1;
-//        for (Candidate c : list
-//        ) {
+            for (Candidate c : ReadCSV.readCSV()
+            ) {
 //            preState.setInt(1, i);
-//            preState.setString(2, c.getEd());
-//            preState.setDate(3, Date.valueOf(c.getsData()));
-//            preState.setString(4, c.getName());
-//            preState.setString(5, c.getParty());
-//            preState.setString(6, c.getRemark());
-//            preState.setString(7, null);
-//            preState.addBatch();
+                preState.setString(1, c.getEd());
+                preState.setDate(2, Date.valueOf(c.getsData()));
+                preState.setString(3, c.getName());
+                preState.setString(4, c.getParty());
+                preState.setString(5, c.getRemark());
+                preState.setString(6, null);
+                preState.addBatch();
 //            i++;
-//        }
-//        preState.executeBatch();
-//        System.out.println("資料上傳完成");
-//        preState.close();
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-    public List<Candidate> getAllCandidates() throws SQLException {
+            }
+            preState.executeBatch();
+            System.out.println("資料上傳完成");
+            writeCSV(conn);
+            preState.close();
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void getAllCandidates() throws SQLException {
         String sql = "select * from `election`.`elections`";
         PreparedStatement preState = conn.prepareStatement(sql);
         ResultSet rs = preState.executeQuery();
@@ -62,13 +72,12 @@ public class CandidateDao {
             c.setName(rs.getString("eleName"));
             c.setParty(rs.getString("party"));
             c.setRemark(rs.getString("remark"));
-            list.add(c);
-
+            System.out.println(c.Cdlist());
         }
         rs.close();
         preState.close();
-        return list;
     }
+
     public void selectCandidates() throws SQLException {
         boolean e = true;
         while (e) {
@@ -204,6 +213,7 @@ public class CandidateDao {
             }
         }
     }
+
     public void delCandidates() {
         try {
             conn.setAutoCommit(false);
@@ -281,7 +291,7 @@ public class CandidateDao {
                             case 2 -> {
                                 String sqlDel = "DELETE FROM election.elections WHERE `elePlace` like ?";
                                 PreparedStatement preState2 = conn.prepareStatement(sqlDel);
-                                preState2.setString(1, where);
+                                preState2.setString(1, "%" + where + "%");
                                 System.out.println("已刪除" + preState2.executeUpdate() + "筆資料");
                                 preState2.close();
 
@@ -481,7 +491,7 @@ public class CandidateDao {
 
                                 String sqlDel = "DELETE FROM election.elections WHERE `eleName` like ?";
                                 PreparedStatement preState2 = conn.prepareStatement(sqlDel);
-                                preState2.setString(1, where);
+                                preState2.setString(1, "%" + where + "%");
                                 System.out.println("已刪除" + preState2.executeUpdate() + "筆資料");
                                 preState2.close();
 
@@ -559,9 +569,9 @@ public class CandidateDao {
                                 }
                             }
                             case 2 -> {
-                                String sqlDel = "DELETE FROM election.elections WHERE ``party` like ?";
+                                String sqlDel = "DELETE FROM election.elections WHERE `party` like ?";
                                 PreparedStatement preState2 = conn.prepareStatement(sqlDel);
-                                preState2.setString(1, where);
+                                preState2.setString(1, "%" + where + "%");
                                 System.out.println("已刪除" + preState2.executeUpdate() + "筆資料");
                                 preState2.close();
 
@@ -586,7 +596,7 @@ public class CandidateDao {
             conn.commit();
             System.out.println("資料更新成功");
             conn.setAutoCommit(true);
-            writeCSV(getAllCandidates());
+            writeCSV(conn);
             ;
         } catch (SQLException e) {
             System.out.println("資料更新失敗");
@@ -597,6 +607,7 @@ public class CandidateDao {
             }
         }
     }
+
     public void addCandidates() {
         try {
             conn.setAutoCommit(false);
@@ -777,12 +788,13 @@ public class CandidateDao {
             }
             conn.setAutoCommit(true);
             System.out.println("資料更新成功");
-            writeCSV(getAllCandidates());
+            writeCSV(conn);
         } catch (SQLException e) {
             System.out.println("資料新增錯誤");
             throw new RuntimeException(e);
         }
     }
+
     public int selectCandidatesToUpd() throws SQLException {
         int id = 0;
         boolean e = true;
@@ -791,7 +803,7 @@ public class CandidateDao {
             System.out.println("2.登記日期");
             System.out.println("3.姓名");
             System.out.println("4.政黨");
-            System.out.println("0.退出查詢");
+            System.out.println("5.退出查詢");
             switch (inputid()) {
                 case 1 -> {
                     String sql = "SELECT * FROM `election`.`elections` where `elePlace` like ?";
@@ -810,39 +822,50 @@ public class CandidateDao {
                     System.out.println("===========================");
                     rs.close();
                     preState.close();
-                    System.out.print("請輸入欲修改之編號:");
-                    id = inputid();
-                    String sql3 = "SELECT * FROM election.elections where cdID = ?";
-                    PreparedStatement preState3 = conn.prepareStatement(sql3);
-                    preState3.setInt(1, id);
-                    ResultSet rs3 = preState3.executeQuery();
-                    while (rs3.next()) {
-                        int cdID = rs3.getInt("cdID");
-                        String elePlace = rs3.getString("elePlace");
-                        LocalDate sDate = rs3.getDate("sDate").toLocalDate();
-                        String eleName = rs3.getString("eleName");
-                        String party = rs3.getString("party");
-                        System.out.format("編號: %d 選區: %s 登記日期 : %s 姓名 : %s 政黨 : %s\n", cdID, elePlace, sDate, eleName, party);
-
-                    }
-                    System.out.println("===========================");
-                    rs3.close();
-                    preState3.close();
-                    System.out.println("1.確認修改");
+                    System.out.println("是否修改");
+                    System.out.println("1.修改");
                     System.out.println("2.取消");
-                    switch (inputid()) {
-                        case 1 -> {
-                            return id;
+                    int out = inputSelect();
+
+                    if (out == 1) {
+                        System.out.print("請輸入欲修改之編號:");
+                        id = inputid();
+                        String sql3 = "SELECT * FROM election.elections where cdID = ?";
+                        PreparedStatement preState3 = conn.prepareStatement(sql3);
+                        preState3.setInt(1, id);
+                        ResultSet rs3 = preState3.executeQuery();
+                        while (rs3.next()) {
+                            int cdID = rs3.getInt("cdID");
+                            String elePlace = rs3.getString("elePlace");
+                            LocalDate sDate = rs3.getDate("sDate").toLocalDate();
+                            String eleName = rs3.getString("eleName");
+                            String party = rs3.getString("party");
+                            System.out.format("編號: %d 選區: %s 登記日期 : %s 姓名 : %s 政黨 : %s\n", cdID, elePlace, sDate, eleName, party);
 
                         }
-                        case 2 -> {
-                            System.out.println("退出");
-                            return 0;
+                        System.out.println("===========================");
+                        rs3.close();
+                        preState3.close();
+                        System.out.println("1.確認修改");
+                        System.out.println("2.取消");
+                        switch (inputid()) {
+                            case 1 -> {
+                                return id;
+
+                            }
+                            case 2 -> {
+                                System.out.println("退出");
+                                return 0;
+                            }
+                            default -> {
+                                System.out.println("輸入錯誤 退出功能！");
+                                return 0;
+                            }
                         }
-                        default -> {
-                            System.out.println("輸入錯誤 退出功能！");
-                            return 0;
-                        }
+                    } else if (out == 2) {
+                        System.out.println("退出");
+                    } else {
+                        System.out.println("指令錯誤");
                     }
                 }
                 case 2 -> {
@@ -897,41 +920,53 @@ public class CandidateDao {
                     System.out.println("===========================");
                     rs.close();
                     preState.close();
-                    System.out.print("請輸入欲修改之編號:");
-                    id = inputid();
-                    String sql3 = "SELECT * FROM election.elections where cdID = ?";
-                    PreparedStatement preState3 = conn.prepareStatement(sql3);
-                    preState3.setInt(1, id);
-                    ResultSet rs3 = preState3.executeQuery();
-                    while (rs3.next()) {
-                        int cdID = rs3.getInt("cdID");
-                        String elePlace = rs3.getString("elePlace");
-                        LocalDate sDate = rs3.getDate("sDate").toLocalDate();
-                        String eleName = rs3.getString("eleName");
-                        String party = rs3.getString("party");
-                        System.out.format("編號: %d 選區: %s 登記日期 : %s 姓名 : %s 政黨 : %s\n", cdID, elePlace, sDate, eleName, party);
-
-                    }
-                    System.out.println("===========================");
-                    rs3.close();
-                    preState3.close();
-                    System.out.println("1.確認修改");
+                    System.out.println("是否修改");
+                    System.out.println("1.修改");
                     System.out.println("2.取消");
-                    switch (inputid()) {
-                        case 1 -> {
-                            return id;
+                    int out = inputSelect();
+
+                    if (out == 1) {
+                        System.out.print("請輸入欲修改之編號:");
+                        id = inputid();
+                        String sql3 = "SELECT * FROM election.elections where cdID = ?";
+                        PreparedStatement preState3 = conn.prepareStatement(sql3);
+                        preState3.setInt(1, id);
+                        ResultSet rs3 = preState3.executeQuery();
+                        while (rs3.next()) {
+                            int cdID = rs3.getInt("cdID");
+                            String elePlace = rs3.getString("elePlace");
+                            LocalDate sDate = rs3.getDate("sDate").toLocalDate();
+                            String eleName = rs3.getString("eleName");
+                            String party = rs3.getString("party");
+                            System.out.format("編號: %d 選區: %s 登記日期 : %s 姓名 : %s 政黨 : %s\n", cdID, elePlace, sDate, eleName, party);
 
                         }
-                        case 2 -> {
-                            System.out.println("退出");
-                            return 0;
+                        System.out.println("===========================");
+                        rs3.close();
+                        preState3.close();
+                        System.out.println("1.確認修改");
+                        System.out.println("2.取消");
+                        switch (inputid()) {
+                            case 1 -> {
+                                return id;
+
+                            }
+                            case 2 -> {
+                                System.out.println("退出");
+                                return 0;
+                            }
+                            default -> {
+                                System.out.println("輸入錯誤 退出功能！");
+                                return 0;
+                            }
                         }
-                        default -> {
-                            System.out.println("輸入錯誤 退出功能！");
-                            return 0;
-                        }
+                    } else if (out == 2) {
+                        System.out.println("退出");
+                    } else {
+                        System.out.println("指令錯誤");
                     }
                 }
+
                 case 3 -> {
                     String sql = "SELECT * FROM `election`.`elections` where `eleName` like ?";
                     PreparedStatement preState = conn.prepareStatement(sql);
@@ -949,39 +984,50 @@ public class CandidateDao {
                     System.out.println("===========================");
                     rs.close();
                     preState.close();
-                    System.out.print("請輸入欲修改之編號:");
-                    id = inputid();
-                    String sql3 = "SELECT * FROM election.elections where cdID = ?";
-                    PreparedStatement preState3 = conn.prepareStatement(sql3);
-                    preState3.setInt(1, id);
-                    ResultSet rs3 = preState3.executeQuery();
-                    while (rs3.next()) {
-                        int cdID = rs3.getInt("cdID");
-                        String elePlace = rs3.getString("elePlace");
-                        LocalDate sDate = rs3.getDate("sDate").toLocalDate();
-                        String eleName = rs3.getString("eleName");
-                        String party = rs3.getString("party");
-                        System.out.format("編號: %d 選區: %s 登記日期 : %s 姓名 : %s 政黨 : %s\n", cdID, elePlace, sDate, eleName, party);
-
-                    }
-                    System.out.println("===========================");
-                    rs3.close();
-                    preState3.close();
-                    System.out.println("1.確認修改");
+                    System.out.println("是否修改");
+                    System.out.println("1.修改");
                     System.out.println("2.取消");
-                    switch (inputid()) {
-                        case 1 -> {
-                            return id;
+                    int out = inputSelect();
+
+                    if (out == 1) {
+                        System.out.print("請輸入欲修改之編號:");
+                        id = inputid();
+                        String sql3 = "SELECT * FROM election.elections where cdID = ?";
+                        PreparedStatement preState3 = conn.prepareStatement(sql3);
+                        preState3.setInt(1, id);
+                        ResultSet rs3 = preState3.executeQuery();
+                        while (rs3.next()) {
+                            int cdID = rs3.getInt("cdID");
+                            String elePlace = rs3.getString("elePlace");
+                            LocalDate sDate = rs3.getDate("sDate").toLocalDate();
+                            String eleName = rs3.getString("eleName");
+                            String party = rs3.getString("party");
+                            System.out.format("編號: %d 選區: %s 登記日期 : %s 姓名 : %s 政黨 : %s\n", cdID, elePlace, sDate, eleName, party);
 
                         }
-                        case 2 -> {
-                            System.out.println("退出");
-                            return 0;
+                        System.out.println("===========================");
+                        rs3.close();
+                        preState3.close();
+                        System.out.println("1.確認修改");
+                        System.out.println("2.取消");
+                        switch (inputid()) {
+                            case 1 -> {
+                                return id;
+
+                            }
+                            case 2 -> {
+                                System.out.println("退出");
+                                return 0;
+                            }
+                            default -> {
+                                System.out.println("輸入錯誤 退出功能！");
+                                return 0;
+                            }
                         }
-                        default -> {
-                            System.out.println("輸入錯誤 退出功能！");
-                            return 0;
-                        }
+                    } else if (out == 2) {
+                        System.out.println("退出");
+                    } else {
+                        System.out.println("指令錯誤");
                     }
                 }
                 case 4 -> {
@@ -1001,43 +1047,54 @@ public class CandidateDao {
                     System.out.println("===========================");
                     rs.close();
                     preState.close();
-                    System.out.print("請輸入欲修改之編號:");
-                    id = inputid();
-                    String sql3 = "SELECT * FROM election.elections where cdID = ?";
-                    PreparedStatement preState3 = conn.prepareStatement(sql3);
-                    preState3.setInt(1, id);
-                    ResultSet rs3 = preState3.executeQuery();
-                    while (rs3.next()) {
-                        int cdID = rs3.getInt("cdID");
-                        String elePlace = rs3.getString("elePlace");
-                        LocalDate sDate = rs3.getDate("sDate").toLocalDate();
-                        String eleName = rs3.getString("eleName");
-                        String party = rs3.getString("party");
-                        System.out.format("編號: %d 選區: %s 登記日期 : %s 姓名 : %s 政黨 : %s\n", cdID, elePlace, sDate, eleName, party);
-
-                    }
-                    System.out.println("===========================");
-                    rs3.close();
-                    preState3.close();
-                    System.out.println("1.確認修改");
+                    System.out.println("是否修改");
+                    System.out.println("1.修改");
                     System.out.println("2.取消");
-                    switch (inputid()) {
-                        case 1 -> {
-                            return id;
+                    int out = inputSelect();
+
+                    if (out == 1) {
+                        System.out.print("請輸入欲修改之編號:");
+                        id = inputid();
+                        String sql3 = "SELECT * FROM election.elections where cdID = ?";
+                        PreparedStatement preState3 = conn.prepareStatement(sql3);
+                        preState3.setInt(1, id);
+                        ResultSet rs3 = preState3.executeQuery();
+                        while (rs3.next()) {
+                            int cdID = rs3.getInt("cdID");
+                            String elePlace = rs3.getString("elePlace");
+                            LocalDate sDate = rs3.getDate("sDate").toLocalDate();
+                            String eleName = rs3.getString("eleName");
+                            String party = rs3.getString("party");
+                            System.out.format("編號: %d 選區: %s 登記日期 : %s 姓名 : %s 政黨 : %s\n", cdID, elePlace, sDate, eleName, party);
 
                         }
-                        case 2 -> {
-                            System.out.println("退出");
-                            return 0;
-                        }
-                        default -> {
-                            System.out.println("輸入錯誤 退出功能！");
-                            return 0;
-                        }
+                        System.out.println("===========================");
+                        rs3.close();
+                        preState3.close();
+                        System.out.println("1.確認修改");
+                        System.out.println("2.取消");
+                        switch (inputid()) {
+                            case 1 -> {
+                                return id;
 
+                            }
+                            case 2 -> {
+                                System.out.println("退出");
+                                return 0;
+                            }
+                            default -> {
+                                System.out.println("輸入錯誤 退出功能！");
+                                return 0;
+                            }
+
+                        }
+                    } else if (out == 2) {
+                        System.out.println("退出");
+                    } else {
+                        System.out.println("指令錯誤");
                     }
                 }
-                case 0 -> {
+                case 5 -> {
                     System.out.println("退出查詢");
                     e = false;
                 }
@@ -1046,6 +1103,7 @@ public class CandidateDao {
         }
         return id;
     }
+
     public void updCandidates(int id) {
         try {
             conn.setAutoCommit(false);
@@ -1098,15 +1156,15 @@ public class CandidateDao {
             String remark = sc.nextLine();
             System.out.println("輸入選號");
             int no = inputCno();
-            String sql ="UPDATE `election`.`elections` SET `elePlace` = ? , `sDate` = ? , `eleName` = ? , `party` = ? , `remark` = ? , `eleNO` = ? WHERE (`cdID` = ? )";
+            String sql = "UPDATE `election`.`elections` SET `elePlace` = ? , `sDate` = ? , `eleName` = ? , `party` = ? , `remark` = ? , `eleNO` = ? WHERE (`cdID` = ? )";
             PreparedStatement preState = conn.prepareStatement(sql);
-            preState.setString(1,place);
-            preState.setDate(2,sDate);
-            preState.setString(3,name);
-            preState.setString(4,party);
-            preState.setString(5,remark);
-            preState.setInt(6,no);
-            preState.setInt(7,id);
+            preState.setString(1, place);
+            preState.setDate(2, sDate);
+            preState.setString(3, name);
+            preState.setString(4, party);
+            preState.setString(5, remark);
+            preState.setInt(6, no);
+            preState.setInt(7, id);
             preState.executeUpdate();
             conn.commit();
             System.out.println("修改成功");
@@ -1122,7 +1180,7 @@ public class CandidateDao {
                 c.setName(resultSet.getString("eleName"));
                 c.setParty(resultSet.getString("party"));
                 c.setRemark(resultSet.getString("remark"));
-                System.out.println(c.Cdlist()+"選號: "+resultSet.getInt("eleNO"));
+                System.out.println(c.Cdlist() + "選號: " + resultSet.getInt("eleNO"));
             }
             resultSet.close();
             preState2.close();

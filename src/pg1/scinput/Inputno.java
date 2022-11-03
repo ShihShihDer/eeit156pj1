@@ -42,7 +42,7 @@ public class Inputno {
 	public static int inputid() {
 
 		Scanner inputno = new Scanner(System.in);
-		final int maxLength = 5;
+		final int maxLength = 20;
 		int num = 0;
 		String str;
 		inputno: while (inputno.hasNextLine()) {

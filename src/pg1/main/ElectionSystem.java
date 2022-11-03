@@ -42,8 +42,12 @@ boolean a = true;
                 case 3 -> upd(cDao);
 //			4.刪除訊息
                 case 4 -> del(cDao);
-//			5.退出訊息管理系統
-//                case 5 -> {}
+//          5.回傳備份檔
+                case 5 -> {
+                    cDao.addAllCandidates();
+                    System.out.println("批次作業完成");
+                }
+//			6.退出訊息管理系統
                 case 6 -> {
                     System.out.println("退出管理系統");
                     try {
