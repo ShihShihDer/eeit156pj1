@@ -1,5 +1,6 @@
 package pg1.ioCSV;
 
+import mysql.com.pj1.model.CandidateDao;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.tika.*;
@@ -8,7 +9,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+
 public class TestIO {
+
     public static void main(String[] args) {
         File folder = new File("C:\\electionDataBase");
         Tika tika = new Tika();

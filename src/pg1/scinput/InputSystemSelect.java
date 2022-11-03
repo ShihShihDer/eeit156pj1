@@ -21,7 +21,7 @@ public class InputSystemSelect {
 					Pattern pattern = Pattern.compile("[0-9]*");
 					if (pattern.matcher(str).matches()) {
 						num = Integer.parseInt(str);
-						if (String.valueOf(num).length() <= maxLength && num > 0 && num <= 5) {
+						if (String.valueOf(num).length() <= maxLength && num > 0 && num <= 6) {
 							break inputno;
 						} else {
 							System.out.println("指令錯誤");
@@ -51,7 +51,7 @@ public class InputSystemSelect {
 		System.out.println("2.新增候選人訊息");
 		System.out.println("3.修改候選人訊息");
 		System.out.println("4.刪除候選人訊息");
-		System.out.println("5.退出系統");
+		System.out.println("6.退出系統");
 		System.out.println("===========================");
 		System.out.print("請輸入對應功能的序號:");
 	}
