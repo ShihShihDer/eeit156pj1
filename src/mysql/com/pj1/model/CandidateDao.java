@@ -78,7 +78,10 @@ public class CandidateDao {
         preState.close();
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7c450ad06a0aaa911262b2c2e57e47d61ee8e8ee
     public void selectCandidates() throws SQLException {
         boolean e = true;
         while (e) {

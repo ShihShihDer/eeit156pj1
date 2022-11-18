@@ -31,7 +31,11 @@ boolean a = true;
                 case 3 -> upd(cDao);
 //			4.刪除訊息
                 case 4 -> del(cDao);
+<<<<<<< HEAD
 //          5.上傳備份檔
+=======
+//          5.回傳備份檔
+>>>>>>> 7c450ad06a0aaa911262b2c2e57e47d61ee8e8ee
                 case 5 -> {
                     cDao.addAllCandidates();
                     System.out.println("批次作業完成");
